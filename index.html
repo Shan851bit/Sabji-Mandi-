@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sabji Mandi - Dadri</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; color: #222; }
+
+    /* TOP BAR */
+    .topbar {
+      background: #1a7a2e;
+      color: white;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .topbar h1 { font-size: 20px; font-weight: 700; }
+    .topbar .location { font-size: 12px; opacity: 0.85; }
+    .cart-btn {
+      background: #ff6b00;
+      border: none;
+      color: white;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    /* AUTH SECTION */
+    .auth-section {
+      background: white;
+      margin: 12px;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .auth-section h2 { font-size: 18px; margin-bottom: 12px; color: #1a7a2e; }
+    .auth-section input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+      margin-bottom: 10px;
+      outline: none;
+    }
+    .auth-section input:focus { border-color: #1a7a2e; }
+    .btn-green {
+      background: #1a7a2e;
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+    .btn-outline {
+      background: white;
+      color: #1a7a2e;
+      border: 2px solid #1a7a2e;
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    .user-bar {
+      background: #e8f5e9;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+    }
+    .user-bar span { color: #1a7a2e; font-weight: 600; }
+    .logout-btn {
+      background: none;
+      border: 1px solid #1a7a2e;
+      color: #1a7a2e;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    /* CATEGORIES */
+    .categories {
+      padding: 12px 12px 4px;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .categories::-webkit-scrollbar { display: none; }
+    .cat-btn {
+      background: white;
+      border: 1.5px solid #ddd;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 13px;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .cat-btn.active {
+      background: #1a7a2e;
+      color: white;
+      border-color: #1a7a2e;
+    }
+
+    /* PRODUCTS */
+    .section-title {
+      padding: 12px 16px 6px;
+      font-size: 17px;
+      font-weight: 700;
+      color: #222;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 0 12px 12px;
+    }
+    .product-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    .product-img {
+      width: 100%;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+    }
+    .product-info { padding: 10px; }
+    .product-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+    .product-weight { font-size: 12px; color: #888; margin-bottom: 6px; }
+    .product-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .product-price { font-size: 16px; font-weight: 700; color: #1a7a2e; }
+    .add-btn {
+      background: #1a7a2e;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .badge {
+      background: #ff6b00;
+      color: white;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-weight: 700;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+
+    /* CART PAGE */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .cart-items { padding: 12px; }
+    .cart-item {
+      background: white;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+    .cart-item-emoji { font-size: 32px; }
+    .cart-item-info { flex: 1; }
+    .cart-item-name { font-size: 15px; font-weight: 600; }
+    .cart-item-price { font-size: 14px; color: #1a7a2e; font-weight: 700; }
+    .qty-controls { display: flex; align-items: center; gap: 8px; }
+    .qty-btn {
+      background: #1a7a2e;
+      color: white;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .qty-num { font-size: 15px; font-weight: 700; min-width: 20px; text-align: center; }
+
+    .cart-total {
+      background: white;
+      margin: 0 12px 12px;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+    .total-row.bold { font-weight: 700; font-size: 17px; border-top: 1px solid #eee; padding-top: 8px; margin-top: 4px; }
+    .order-form { padding: 0 12px 12px; }
+    .order-form input, .order-form textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+      margin-bottom: 10px;
+      outline: none;
+      font-family: inherit;
+    }
+    .order-form input:focus, .order-form textarea:focus { border-color: #1a7a2e; }
+
+    /* ADMIN PAGE */
+    .admin-order {
+      background: white;
+      border-radius: 10px;
+      padding: 14px;
+      margin: 0 12px 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      border-left: 4px solid #1a7a2e;
+    }
+    .order-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+    .order-name { font-weight: 700; font-size: 15px; }
+    .order-time { font-size: 12px; color: #888; }
+    .order-items { font-size: 13px; color: #555; margin-bottom: 6px; }
+    .order-total-text { font-size: 14px; font-weight: 700; color: #1a7a2e; }
+    .order-address { font-size: 13px; color: #666; margin-top: 4px; }
+    .status-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #fff3cd;
+      color: #856404;
+    }
+    .status-badge.delivered { background: #d4edda; color: #155724; }
+
+    /* BOTTOM NAV */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      display: flex;
+      border-top: 1px solid #eee;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+    }
+    .nav-item {
+      flex: 1;
+      padding: 10px 0;
+      text-align: center;
+      cursor: pointer;
+      font-size: 11px;
+      color: #888;
+      border: none;
+      background: none;
+    }
+    .nav-item.active { color: #1a7a2e; font-weight: 600; }
+    .nav-item .nav-icon { font-size: 22px; display: block; }
+    .cart-count {
+      background: #ff6b00;
+      color: white;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      top: -8px;
+      left: -6px;
+    }
+
+    .pb80 { padding-bottom: 80px; }
+    .empty-cart { text-align: center; padding: 40px 20px; color: #888; }
+    .empty-cart .big { font-size: 48px; margin-bottom: 12px; }
+    .msg { padding: 10px 16px; border-radius: 8px; margin: 12px; font-size: 14px; }
+    .msg.success { background: #d4edda; color: #155724; }
+    .msg.error { background: #f8d7da; color: #721c24; }
+    .hidden { display: none !important; }
+    .loading { text-align: center; padding: 20px; color: #888; }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div>
+    <div class="location">📍 Dadri, Gautam Buddha Nagar</div>
+    <h1>🥦 Sabji Mandi</h1>
+  </div>
+  <button class="cart-btn" onclick="showPage('cart')">🛒 Cart <span id="cartCountTop">0</span></button>
+</div>
+
+<!-- HOME PAGE -->
+<div id="page-home" class="page active pb80">
+
+  <!-- User Bar -->
+  <div id="userBar" class="user-bar hidden">
+    <span id="userEmail">User</span>
+    <button class="logout-btn" onclick="logoutUser()">Logout</button>
+  </div>
+
+  <!-- Login Section -->
+  <div id="authSection" class="auth-section">
+    <h2>🔐 Login / Register</h2>
+    <input type="email" id="emailInput" placeholder="Enter your email" />
+    <input type="password" id="passInput" placeholder="Password (min 6 characters)" />
+    <button class="btn-green" onclick="loginUser()">Login</button>
+    <button class="btn-outline" onclick="registerUser()">Create New Account</button>
+    <div id="authMsg" class="hidden"></div>
+  </div>
+
+  <!-- Categories -->
+  <div class="categories">
+    <button class="cat-btn active" onclick="filterCat('all', this)">🌿 All</button>
+    <button class="cat-btn" onclick="filterCat('sabzi', this)">🥦 Vegetables</button>
+    <button class="cat-btn" onclick="filterCat('fruit', this)">🍎 Fruits</button>
+    <button class="cat-btn" onclick="filterCat('masala', this)">🌶️ Spices</button>
+    <button class="cat-btn" onclick="filterCat('dal', this)">🫘 Lentils</button>
+  </div>
+
+  <div class="section-title">🌱 Fresh Vegetables</div>
+  <div class="products-grid" id="productsGrid"></div>
+</div>
+
+<!-- CART PAGE -->
+<div id="page-cart" class="page pb80">
+  <div class="section-title">🛒 Mera Cart</div>
+  <div id="cartList"></div>
+  <div id="cartTotal" class="cart-total hidden">
+    <div class="total-row"><span>Subtotal</span><span id="subtotalAmt">₹0</span></div>
+    <div class="total-row"><span>Delivery</span><span>₹20</span></div>
+    <div class="total-row bold"><span>Total</span><span id="totalAmt">₹0</span></div>
+  </div>
+  <div id="orderFormDiv" class="order-form hidden">
+    <div class="section-title" style="padding-left:0">📦 Order Details</div>
+    <input type="text" id="custName" placeholder="Your Name" />
+    <input type="tel" id="custPhone" placeholder="Mobile Number" />
+    <textarea id="custAddress" placeholder="Home address (area, street...)" rows="3"></textarea>
+    <button class="btn-green" onclick="placeOrder()">✅ Place Order</button>
+    <div id="orderMsg" class="hidden"></div>
+  </div>
+</div>
+
+<!-- ADMIN PAGE -->
+<div id="page-admin" class="page pb80">
+  <div class="section-title">📋 Saare Orders</div>
+  <div id="adminOrders"><div class="loading">Loading orders...</div></div>
+</div>
+
+<!-- PROFILE PAGE -->
+<div id="page-profile" class="page pb80">
+  <div class="auth-section" style="margin-top:12px">
+    <h2>👤 Profile</h2>
+    <div id="profileInfo" style="font-size:15px; color:#555; line-height:1.8">
+      Please login to view your profile.
+    </div>
+    <div style="margin-top:16px">
+      <button class="btn-green" onclick="showPage('home')" style="width:auto;padding:10px 24px">🏠 Home</button>
+    </div>
+    <div style="margin-top:12px">
+      <button class="btn-outline" id="adminBtn" onclick="showPage('admin')" style="display:none">🔑 Admin Panel</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="nav-item active" id="nav-home" onclick="showPage('home')">
+    <span class="nav-icon">🏠</span>Home
+  </button>
+  <button class="nav-item" id="nav-cart" onclick="showPage('cart')">
+    <span class="nav-icon">🛒<span id="cartBadge" class="cart-count hidden">0</span></span>Cart
+  </button>
+  <button class="nav-item" id="nav-profile" onclick="showPage('profile')">
+    <span class="nav-icon">👤</span>Profile
+  </button>
+</div>
+
+<!-- FIREBASE -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, getDocs, orderBy, query, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA3bRSbOZ0g3gYU09JR_C0v2REgVwP2ruc",
+    authDomain: "sabji-mandi-83ff9.firebaseapp.com",
+    projectId: "sabji-mandi-83ff9",
+    storageBucket: "sabji-mandi-83ff9.firebasestorage.app",
+    messagingSenderId: "820037557756",
+    appId: "1:820037557756:web:de10903331f8629e09e679",
+    measurementId: "G-RB4PD0WRRW"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // ADMIN EMAIL - apna email yahan rakho
+  const ADMIN_EMAIL = "shan@sabji.com";
+
+  // PRODUCTS DATA
+  const products = [
+    { id:1, name:"Tomato", hindi:"", emoji:"🍅", price:30, weight:"500g", cat:"sabzi", off:"10% OFF" },
+    { id:2, name:"Potato", hindi:"", emoji:"🥔", price:25, weight:"1kg", cat:"sabzi", off:"" },
+    { id:3, name:"Onion", hindi:"", emoji:"🧅", price:35, weight:"1kg", cat:"sabzi", off:"5% OFF" },
+    { id:4, name:"Spinach", hindi:"", emoji:"🥬", price:20, weight:"250g", cat:"sabzi", off:"" },
+    { id:5, name:"Carrot", hindi:"", emoji:"🥕", price:40, weight:"500g", cat:"sabzi", off:"" },
+    { id:6, name:"Cauliflower", hindi:"", emoji:"🥦", price:35, weight:"1 pcs", cat:"sabzi", off:"" },
+    { id:7, name:"Lemon", hindi:"", emoji:"🍋", price:10, weight:"4 pcs", cat:"fruit", off:"" },
+    { id:8, name:"Apple", hindi:"", emoji:"🍎", price:120, weight:"1kg", cat:"fruit", off:"15% OFF" },
+    { id:9, name:"Banana", hindi:"", emoji:"🍌", price:45, weight:"12 pcs", cat:"fruit", off:"" },
+    { id:10, name:"Red Chilli", hindi:"", emoji:"🌶️", price:60, weight:"100g", cat:"masala", off:"" },
+    { id:11, name:"Turmeric", hindi:"", emoji:"🟡", price:40, weight:"100g", cat:"masala", off:"" },
+    { id:12, name:"Masoor Dal", hindi:"", emoji:"🫘", price:90, weight:"500g", cat:"dal", off:"" },
+  ];
+
+  let cart = {};
+  let currentUser = null;
+  let currentFilter = 'all';
+
+  // Render Products
+  function renderProducts(filter = 'all') {
+    const grid = document.getElementById('productsGrid');
+    const filtered = filter === 'all' ? products : products.filter(p => p.cat === filter);
+    grid.innerHTML = filtered.map(p => `
+      <div class="product-card">
+        <div class="product-img" style="background:${getBg(p.cat)}">${p.emoji}</div>
+        <div class="product-info">
+          ${p.off ? `<span class="badge">${p.off}</span>` : ''}
+          <div class="product-name">${p.name} <small style="color:#888;font-weight:400">${p.hindi}</small></div>
+          <div class="product-weight">${p.weight}</div>
+          <div class="product-bottom">
+            <span class="product-price">₹${p.price}</span>
+            <button class="add-btn" onclick="addToCart(${p.id})">+ Add</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function getBg(cat) {
+    const bgs = { sabzi:'#e8f5e9', fruit:'#fff3e0', masala:'#fce4ec', dal:'#f3e5f5' };
+    return bgs[cat] || '#f5f5f5';
+  }
+
+  // Cart Functions
+  window.addToCart = function(id) {
+    if (!currentUser) {
+      alert('Please login first! 🔐');
+      showPage('home');
+      return;
+    }
+    cart[id] = (cart[id] || 0) + 1;
+    updateCartUI();
+    showMsg('orderMsg', '✅ Added to cart!', 'success');
+  };
+
+  function updateCartUI() {
+    const count = Object.values(cart).reduce((a,b) => a+b, 0);
+    document.getElementById('cartCountTop').textContent = count;
+    const badge = document.getElementById('cartBadge');
+    if (count > 0) { badge.classList.remove('hidden'); badge.textContent = count; }
+    else badge.classList.add('hidden');
+  }
+
+  function renderCart() {
+    const cartList = document.getElementById('cartList');
+    const keys = Object.keys(cart).filter(k => cart[k] > 0);
+    if (keys.length === 0) {
+      cartList.innerHTML = `<div class="empty-cart"><div class="big">🛒</div><p>Cart is empty!<br>Add some vegetables 🥦</p></div>`;
+      document.getElementById('cartTotal').classList.add('hidden');
+      document.getElementById('orderFormDiv').classList.add('hidden');
+      return;
+    }
+    let subtotal = 0;
+    cartList.innerHTML = keys.map(k => {
+      const p = products.find(x => x.id == k);
+      subtotal += p.price * cart[k];
+      return `
+        <div class="cart-item">
+          <div class="cart-item-emoji">${p.emoji}</div>
+          <div class="cart-item-info">
+            <div class="cart-item-name">${p.name}</div>
+            <div class="cart-item-price">₹${p.price} x ${cart[k]} = ₹${p.price * cart[k]}</div>
+          </div>
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="changeQty(${k}, -1)">−</button>
+            <span class="qty-num">${cart[k]}</span>
+            <button class="qty-btn" onclick="changeQty(${k}, 1)">+</button>
+          </div>
+        </div>`;
+    }).join('');
+    document.getElementById('subtotalAmt').textContent = '₹' + subtotal;
+    document.getElementById('totalAmt').textContent = '₹' + (subtotal + 20);
+    document.getElementById('cartTotal').classList.remove('hidden');
+    document.getElementById('orderFormDiv').classList.remove('hidden');
+  }
+
+  window.changeQty = function(id, delta) {
+    cart[id] = (cart[id] || 0) + delta;
+    if (cart[id] <= 0) delete cart[id];
+    updateCartUI();
+    renderCart();
+  };
+
+  // Place Order
+  window.placeOrder = async function() {
+    if (!currentUser) { alert('Please login first!'); return; }
+    const name = document.getElementById('custName').value.trim();
+    const phone = document.getElementById('custPhone').value.trim();
+    const address = document.getElementById('custAddress').value.trim();
+    if (!name || !phone || !address) {
+      showMsg('orderMsg', '⚠️ Please fill all fields!', 'error');
+      return;
+    }
+    const keys = Object.keys(cart).filter(k => cart[k] > 0);
+    if (keys.length === 0) { showMsg('orderMsg', '⚠️ Cart is empty!', 'error'); return; }
+
+    const items = keys.map(k => {
+      const p = products.find(x => x.id == k);
+      return `${p.name} x${cart[k]}`;
+    });
+    const subtotal = keys.reduce((sum, k) => {
+      const p = products.find(x => x.id == k);
+      return sum + p.price * cart[k];
+    }, 0);
+
+    try {
+      await addDoc(collection(db, "orders"), {
+        customerName: name,
+        phone: phone,
+        address: address,
+        items: items.join(', '),
+        subtotal: subtotal,
+        total: subtotal + 20,
+        userId: currentUser.uid,
+        userEmail: currentUser.email,
+        status: "pending",
+        createdAt: serverTimestamp()
+      });
+      cart = {};
+      updateCartUI();
+      document.getElementById('custName').value = '';
+      document.getElementById('custPhone').value = '';
+      document.getElementById('custAddress').value = '';
+      showMsg('orderMsg', '🎉 Order placed! We will deliver soon!', 'success');
+      renderCart();
+    } catch (e) {
+      showMsg('orderMsg', '❌ Error: ' + e.message, 'error');
+    }
+  };
+
+  // Admin: Load Orders
+  async function loadAdminOrders() {
+    const div = document.getElementById('adminOrders');
+    try {
+      const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
+      const snap = await getDocs(q);
+      if (snap.empty) { div.innerHTML = '<div class="loading">No orders yet.</div>'; return; }
+      div.innerHTML = snap.docs.map(doc => {
+        const o = doc.data();
+        const time = o.createdAt ? new Date(o.createdAt.seconds * 1000).toLocaleString('en-IN') : 'Just now';
+        return `<div class="admin-order">
+          <div class="order-header">
+            <span class="order-name">👤 ${o.customerName}</span>
+            <span class="status-badge">${o.status}</span>
+          </div>
+          <div class="order-items">📦 ${o.items}</div>
+          <div class="order-total-text">💰 Total: ₹${o.total}</div>
+          <div class="order-address">📍 ${o.address}</div>
+          <div class="order-address">📱 ${o.phone}</div>
+          <div class="order-time" style="font-size:11px;color:#aaa;margin-top:4px">🕐 ${time}</div>
+        </div>`;
+      }).join('');
+    } catch (e) {
+      div.innerHTML = '<div class="loading">Orders could not be loaded.</div>';
+    }
+  }
+
+  // Auth
+  window.loginUser = async function() {
+    const email = document.getElementById('emailInput').value;
+    const pass = document.getElementById('passInput').value;
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+      showMsg('authMsg', '✅ Logged in successfully!', 'success');
+    } catch (e) {
+      showMsg('authMsg', '❌ ' + e.message, 'error');
+    }
+  };
+
+  window.registerUser = async function() {
+    const email = document.getElementById('emailInput').value;
+    const pass = document.getElementById('passInput').value;
+    try {
+      await createUserWithEmailAndPassword(auth, email, pass);
+      showMsg('authMsg', '🎉 Account created successfully!', 'success');
+    } catch (e) {
+      showMsg('authMsg', '❌ ' + e.message, 'error');
+    }
+  };
+
+  window.logoutUser = async function() {
+    await signOut(auth);
+  };
+
+  onAuthStateChanged(auth, user => {
+    currentUser = user;
+    if (user) {
+      document.getElementById('authSection').classList.add('hidden');
+      document.getElementById('userBar').classList.remove('hidden');
+      document.getElementById('userEmail').textContent = '👋 ' + user.email;
+      document.getElementById('profileInfo').innerHTML = `
+        <b>Email:</b> ${user.email}<br>
+        <b>UID:</b> ${user.uid.substring(0,12)}...
+      `;
+      if (user.email === ADMIN_EMAIL) {
+        document.getElementById('adminBtn').style.display = 'block';
+      }
+    } else {
+      document.getElementById('authSection').classList.remove('hidden');
+      document.getElementById('userBar').classList.add('hidden');
+      document.getElementById('profileInfo').textContent = 'Please login to view your profile.';
+      document.getElementById('adminBtn').style.display = 'none';
+    }
+  });
+
+  // Navigation
+  window.showPage = function(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+    const nav = document.getElementById('nav-' + page);
+    if (nav) nav.classList.add('active');
+    if (page === 'cart') renderCart();
+    if (page === 'admin') loadAdminOrders();
+  };
+
+  window.filterCat = function(cat, btn) {
+    currentFilter = cat;
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderProducts(cat);
+  };
+
+  function showMsg(id, text, type) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = text;
+    el.className = 'msg ' + type;
+    el.classList.remove('hidden');
+    setTimeout(() => el.classList.add('hidden'), 3000);
+  }
+
+  // Init
+  renderProducts();
+</script>
+</body>
+</html>
